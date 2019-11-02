@@ -6,6 +6,7 @@ from sqlalchemy.orm import backref
 from flask_user import current_user, login_required, roles_required, UserManager, UserMixin
 
 
+
 # Class-based application configuration
 class ConfigClass(object):
     """ Flask application config """
@@ -211,8 +212,8 @@ def create_app():
             return render_template_string('user exists')
     return app
 
+app = create_app()
 
 # Start development web server
 if __name__ == '__main__':
-    app = create_app()
     app.run()
