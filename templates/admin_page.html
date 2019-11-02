@@ -1,0 +1,57 @@
+{% extends "flask_user_layout.html" %}
+    {% block content %}
+
+<style>
+input[type=text], select {
+  width: 30%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type=submit] {
+  width: 20%;
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+
+.form {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+</style>
+
+    <h2>{%trans%}Admin Page{%endtrans%}</h2>
+    <h3>Add new user</h3>
+
+    <div class="form">
+        <form action="{{ url_for('add_new') }}" method="post">
+            <lable for="role">Role</lable>
+            <select name="role" id="role" required>
+                <option value="User">User</option>
+                <option value="Compliance">Compliance</option>
+            </select>
+            <br/>
+            <lable for="username">Username</lable>
+            <input type="text" name="username" id="username" required>
+            <br/>
+            <lable for="username">Password</lable>
+            <input type="text" name="password" id="password" required>
+            <br/>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+{% endblock %}

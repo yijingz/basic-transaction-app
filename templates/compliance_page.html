@@ -1,0 +1,80 @@
+{% extends "flask_user_layout.html" %}
+{% block content %}
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+.header {
+  background-color: #dddddd;
+  text-align: center;
+}
+
+.hideextra {
+  border:none;
+}
+
+</style>
+
+    <table>
+        <tr>
+           <th>Submitter Username</th>
+            <th>Company</th>
+            <th>Number of Shares</th>
+        </tr>
+        <tr>
+            <th colspan="3" class="header">Pending transaction requests</th>
+        </tr>
+    {% for item in pending %}
+    <tr>
+        <td>{{item.users.username}}</td>
+        <td>{{item.company}}</td>
+        <td>{{item.amount}}</td>
+        <td class="hideextra">
+          <form action="{{ url_for('reject_trans') }}" method="post">
+            <input type="hidden" name="trans_id" value="{{ item.id }}"/>
+            <input type="submit" name="submit_button" class="btn btn-xs btn-danger" value="Reject"/>
+              <input type="submit" name="submit_button" class="btn btn-xs btn-success" value="Approve"/>
+          </form>
+        </td>
+
+    </tr>
+    {% endfor %}
+
+        <tr>
+            <th colspan="3" class="header">Rejected transaction requests</th>
+        </tr>
+
+    {% for item in rejected %}
+    <tr>
+        <td>{{item.users.username}}</td>
+        <td>{{item.company}}</td>
+        <td>{{item.amount}}</td>
+
+    </tr>
+    {% endfor %}
+
+        <tr>
+            <th colspan="3" class="header">Approved transaction requests</th>
+        </tr>
+    {% for item in approved %}
+    <tr>
+        <td>{{item.users.username}}</td>
+        <td>{{item.company}}</td>
+        <td>{{item.amount}}</td>
+
+    </tr>
+    {% endfor %}
+    </table>
+
+
+
+{% endblock %}

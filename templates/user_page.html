@@ -1,0 +1,116 @@
+{% extends "flask_user_layout.html" %}
+    {% block content %}
+
+<style>
+input[type=text], select {
+  width: 30%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type=submit] {
+  width: 20%;
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 60%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+.header {
+  background-color: #dddddd;
+  text-align: center;
+}
+
+.form {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+</style>
+
+        <h2>{%trans%}User Page{%endtrans%}</h2>
+        <h4>Add new transaction</h4>
+
+        <div class="form">
+            <form action="{{ url_for('add_trans') }}" method="post">
+
+                <label for="company">Company Name</label>
+                <input type="text" name="company" id="company" required>
+                <br/>
+
+                <label for="num">Number of Shares</label>
+                <input type="number" name="num_shares" id="num" required>
+                <br/>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+<br/>
+<br/>
+
+<div>
+<h4>My Transactions</h4>
+<table>
+        <tr>
+           <th>Company</th>
+            <th>Number of Shares</th>
+        </tr>
+        <tr>
+            <th colspan="2" class="header">Pending transaction requests</th>
+        </tr>
+    {% for item in pending %}
+    <tr>
+        <td>{{item.company}}</td>
+        <td>{{item.amount}}</td>
+
+    </tr>
+    {% endfor %}
+
+        <tr>
+            <th colspan="2" class="header">Rejected transaction requests</th>
+        </tr>
+
+    {% for item in rejected %}
+    <tr>
+        <td>{{item.company}}</td>
+        <td>{{item.amount}}</td>
+
+    </tr>
+    {% endfor %}
+
+        <tr>
+            <th colspan="2" class="header">Approved transaction requests</th>
+        </tr>
+    {% for item in approved %}
+    <tr>
+        <td>{{item.company}}</td>
+        <td>{{item.amount}}</td>
+
+    </tr>
+    {% endfor %}
+    </table>
+</div>
+{% endblock %}
