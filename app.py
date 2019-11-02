@@ -15,7 +15,7 @@ class ConfigClass(object):
     SECRET_KEY = 'This is an INSECURE secret!! DO NOT use this in production!!'
 
     # Flask-SQLAlchemy settings
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///basic_app.sqlite'  # File-based SQL database
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///app_data/basic_app.sqlite'  # File-based SQL database
     SQLALCHEMY_TRACK_MODIFICATIONS = False  # Avoids SQLAlchemy warning
     SQLALCHEMY_ENGINE_OPTIONS = {
         "pool_pre_ping": True,
@@ -87,7 +87,7 @@ def create_app():
     # Create all database tables
     db.create_all()
 
-    # Create 'user' user with no roles
+    # Create 'user' user with user role, append two associated transaction records
     if not User.query.filter(User.username == 'user').first():
         user = User(
             username='user',
@@ -109,6 +109,7 @@ def create_app():
         db.session.add(user)
         db.session.commit()
 
+    # Create 'comp' user with 'comp' role
     if not User.query.filter(User.username == 'comp').first():
         user = User(
             username='comp',
@@ -118,6 +119,7 @@ def create_app():
         db.session.add(user)
         db.session.commit()
 
+    # Create 'user_test' user with 'user' role
     if not User.query.filter(User.username == 'user_test').first():
         user = User(
             username='user_test',
@@ -133,11 +135,11 @@ def create_app():
 
         return render_template('home_page.html')
 
+    # The user page requires an 'user' role.
     @app.route('/user')
     @roles_required('User')
     def user_page():
         user_id = current_user.id
-        lst = Transactions.query.filter(Transactions.status == 0).all()
 
         pending = Transactions.query.filter(Transactions.user_id == user_id, Transactions.status == 0).all()
         approved = Transactions.query.filter(Transactions.user_id == user_id, Transactions.status == 1).all()
@@ -146,6 +148,7 @@ def create_app():
 
         return render_template('user_page.html', pending=pending, approved=approved, rejected=rejected)
 
+    #user submits transaction record
     @app.route('/add_trans', methods=['POST'])
     def add_trans():
         company = request.form['company']
@@ -159,10 +162,7 @@ def create_app():
 
         return redirect(url_for('user_page'))
 
-
-
-
-    # The Members page is only accessible to authenticated users
+    # The compliance page requires an 'compliance' role.
     @app.route('/compliance')
     @roles_required('Compliance')
     def member_page():
@@ -172,8 +172,9 @@ def create_app():
 
         return render_template('compliance_page.html', pending=pending, approved=approved, rejected=rejected)
 
-    @app.route('/reject_trans', methods=['POST'])
-    def reject_trans():
+    #compliance can reject/approve transactions, reload page after submitting decision
+    @app.route('/decide_trans', methods=['POST'])
+    def decide_trans():
         trans_id = request.form['trans_id']
         decision = 1 if request.form['submit_button'] == "Approve" else 2
 
@@ -189,10 +190,11 @@ def create_app():
 
     # The Admin page requires an 'Admin' role.
     @app.route('/admin')
-    @roles_required('Admin')  # Use of @roles_required decorator
+    @roles_required('Admin')
     def admin_page():
         return render_template('admin_page.html')
 
+    # admin can add new user/compliance, show 'user exists' if username has duplicates
     @app.route('/add_new', methods=['POST'])
     def add_new():
         role = request.form['role']
