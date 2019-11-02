@@ -17,6 +17,11 @@ class ConfigClass(object):
     # Flask-SQLAlchemy settings
     SQLALCHEMY_DATABASE_URI = 'sqlite:///basic_app.sqlite'  # File-based SQL database
     SQLALCHEMY_TRACK_MODIFICATIONS = False  # Avoids SQLAlchemy warning
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_pre_ping": True,
+        "pool_recycle": 300,
+        "connect_args": {'timeout': 15}
+    }
 
     # Flask-User settings
     USER_APP_NAME = "Flask-Simple Transaction Request Management"
@@ -133,8 +138,6 @@ def create_app():
     def user_page():
         user_id = current_user.id
         lst = Transactions.query.filter(Transactions.status == 0).all()
-        x = [i.user_id for i in lst]
-
 
         pending = Transactions.query.filter(Transactions.user_id == user_id, Transactions.status == 0).all()
         approved = Transactions.query.filter(Transactions.user_id == user_id, Transactions.status == 1).all()
